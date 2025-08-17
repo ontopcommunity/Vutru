@@ -35,5 +35,94 @@
       
     </div>
     <script type="module" src="script.js"></script>
+<style>
+  :root {
+    --bg: #000;        /* nền đen cho chữ trắng dễ nhìn */
+    --fg: #fff;        /* màu chữ trắng */
+    --fade: 300ms;     /* thời gian mờ dần */
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+  .wrap {
+    height: 100%;
+    display: grid;
+    place-items: center;         /* căn giữa */
+    text-align: center;
+    cursor: pointer;             /* gợi ý có thể bấm */
+    user-select: none;
+    padding: 24px;
+  }
+  .msg {
+    color: var(--fg);
+    font-size: 2rem;
+    line-height: 1.4;
+    opacity: 1;
+    transition: opacity var(--fade), visibility var(--fade);
+  }
+  .hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  /* gợi ý nhỏ lúc đầu */
+  .hint {
+    margin-top: 12px;
+    font-size: .95rem;
+    color: #bbb;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" id="screen">
+    <div>
+      <div id="msg1" class="msg">Dòng chữ đầu tiên</div>
+      <div id="msg2" class="msg hidden">Dòng chữ thứ hai</div>
+      <div class="hint" id="hint">(Bấm để bắt đầu)</div>
+    </div>
+  </div>
+
+<script>
+  // ==== TÙY CHỈNH NHANH (nếu cần) ====
+  const DELAY_TO_SHOW_MSG2 = 7000; // 7 giây
+  const SHOW_MSG2_DURATION = 3000; // 3 giây
+
+  const screen = document.getElementById('screen');
+  const msg1   = document.getElementById('msg1');
+  const msg2   = document.getElementById('msg2');
+  const hint   = document.getElementById('hint');
+
+  let started = false;
+
+  function hide(el){ el.classList.add('hidden'); }
+  function show(el){ el.classList.remove('hidden'); }
+
+  function startSequence(){
+    if (started) return;
+    started = true;
+
+    // 1) Ẩn ngay dòng 1 khi bấm
+    hide(msg1);
+    hide(hint);
+
+    // 2) Sau 7 giây, hiện dòng 2
+    setTimeout(() => {
+      show(msg2);
+
+      // 3) Sau ~3 giây, ẩn dòng 2
+      setTimeout(() => {
+        hide(msg2);
+      }, SHOW_MSG2_DURATION);
+
+    }, DELAY_TO_SHOW_MSG2);
+  }
+
+  // Bấm bất kỳ đâu trong khu vực để bắt đầu
+  screen.addEventListener('click', startSequence);
+  // (tuỳ chọn) nhấn phím bất kỳ cũng bắt đầu
+  document.addEventListener('keydown', startSequence);
 </body>
 </html>
+
